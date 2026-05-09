@@ -50,7 +50,7 @@ $mensaje .= "💵 *Total:* $" . number_format($total, 0, ',', '.') . "\n";
 $mensaje .= "----------------------------------\n";
 $mensaje .= "¡Gracias por comprar en Atrato Dulce! 🩷🍰";
 
-// 3️⃣ Redirigir a WhatsApp
+// 3️ Redirigir a WhatsApp
 $mensaje_encoded = urlencode($mensaje);
 header("Location: https://wa.me/$numero_negocio?text=$mensaje_encoded");
 exit;
