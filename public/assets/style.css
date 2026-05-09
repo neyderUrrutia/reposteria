@@ -1,0 +1,410 @@
+/* ======================================
+   COLORES ATRATO DULCE
+====================================== */
+
+:root {
+    --cream: #fdf6ee;
+    --warm: #f5e6d0;
+    --mocha: #3b2314;
+    --caramel: #c0703a;
+    --rose: #d4737a;
+    --gold: #c9a84c;
+}
+
+/* ======================================
+   GENERAL
+====================================== */
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    margin: 0;
+    padding-top: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--mocha);
+}
+
+/* ======================================
+   HEADER
+====================================== */
+
+.main-header {
+    background: rgba(255,255,255,0.95);
+    border-bottom: 3px solid var(--caramel);
+
+    position: sticky;
+    top: 0;
+    width: 100%;
+
+    z-index: 1000;
+
+    backdrop-filter: blur(10px);
+    transition: all .3s ease;
+}
+
+.logo {
+    transition: transform .3s;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.titulo-logo {
+    color: var(--mocha);
+}
+
+.logo-dulce {
+    color: var(--caramel);
+}
+
+/* ======================================
+   MENÚ
+====================================== */
+
+.menu-link {
+    color: var(--mocha);
+    text-decoration: none;
+    transition: .3s;
+    font-weight: 500;
+}
+
+.menu-link:hover {
+    color: var(--caramel);
+}
+
+/* ======================================
+   BOTONES GENERALES
+====================================== */
+
+.btn-login {
+    border: 2px solid var(--mocha);
+    color: var(--mocha);
+    background: transparent;
+    border-radius: 50px;
+}
+
+.btn-login:hover {
+    background: var(--mocha);
+    color: white;
+}
+
+.btn-cerrar {
+    background: var(--caramel);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 18px;
+}
+
+.btn-cerrar:hover {
+    background: var(--mocha);
+}
+
+.btn-add {
+    background: var(--caramel);
+    color: white;
+    border: none;
+    border-radius: 50px;
+}
+
+.btn-add:hover {
+    background: var(--mocha);
+    color: white;
+}
+
+.btn-outline-mocha {
+    border: 2px solid var(--mocha);
+    color: var(--mocha);
+    background: transparent;
+    border-radius: 50px;
+}
+
+.btn-outline-mocha:hover {
+    background: var(--mocha);
+    color: white;
+}
+
+/* ======================================
+   BOTÓN NUEVO PRODUCTO
+====================================== */
+
+a.btn-success,
+button.btn-success {
+
+    background: var(--caramel) !important;
+    border: none !important;
+    color: white !important;
+
+    border-radius: 50px !important;
+    padding: 10px 20px !important;
+
+    transition: .3s;
+
+}
+
+a.btn-success:hover,
+button.btn-success:hover {
+
+    background: var(--mocha) !important;
+
+}
+
+/* ======================================
+   BOTÓN EDITAR
+====================================== */
+
+a.btn-primary,
+button.btn-primary {
+
+    background: var(--mocha) !important;
+    border: none !important;
+    color: white !important;
+
+    border-radius: 50px !important;
+
+    transition: .3s;
+
+}
+
+a.btn-primary:hover,
+button.btn-primary:hover {
+
+    background: var(--caramel) !important;
+
+}
+
+/* ======================================
+   BOTÓN ELIMINAR
+====================================== */
+
+a.btn-danger,
+button.btn-danger {
+
+    background: #7b3f2a !important;
+    border: none !important;
+    color: white !important;
+
+    border-radius: 50px !important;
+
+    transition: .3s;
+
+}
+
+a.btn-danger:hover,
+button.btn-danger:hover {
+
+    background: #522416 !important;
+
+}
+
+/* ======================================
+   BANNER
+====================================== */
+
+.banner-img {
+    height: 380px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.carousel-caption {
+    background: rgba(0,0,0,.45);
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.titulo-principal {
+    color: white;
+    font-size: 2.2rem;
+}
+
+.texto-banner {
+    color: white;
+}
+
+/* ======================================
+   CATEGORÍAS
+====================================== */
+
+.categories {
+    background: var(--warm);
+    padding: 80px 0;
+}
+
+.categories::before {
+    content: "LO QUE TENEMOS PARA TI";
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--caramel);
+    margin-bottom: 10px;
+}
+
+.titulo-seccion {
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.titulo-seccion::after {
+    content: "";
+    width: 50px;
+    height: 3px;
+    background: var(--caramel);
+    display: block;
+    margin: 15px auto 0;
+    border-radius: 10px;
+}
+
+.categoria-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(192,112,58,.25);
+    transition: .3s;
+    cursor: pointer;
+}
+
+.categoria-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0,0,0,.08);
+    border: 1px solid var(--caramel);
+}
+
+.icono-categoria {
+    width: 70px;
+    height: 70px;
+    background: #f6e7d8;
+    color: var(--caramel);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 26px;
+}
+
+/* ======================================
+   PRODUCTOS
+====================================== */
+
+.product-card {
+    border-radius: 18px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    transition: .3s;
+    overflow: hidden;
+    background: white;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 22px rgba(0,0,0,.1);
+}
+
+.product-card img {
+    border-radius: 18px 18px 0 0;
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* ======================================
+   TABLAS ADMIN
+====================================== */
+
+.table {
+    border-radius: 18px;
+    overflow: hidden;
+    background: white;
+}
+
+.table thead {
+    background: var(--warm);
+}
+
+.table th {
+    color: var(--mocha);
+    font-weight: 600;
+    border: none;
+}
+
+.table td {
+    vertical-align: middle;
+    border-color: #f1e4d8;
+}
+
+/* ======================================
+   IMÁGENES TABLAS
+====================================== */
+
+table img {
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* ======================================
+   NAVBAR MOBILE
+====================================== */
+
+.menu-mobile {
+    color: var(--mocha);
+}
+
+.menu-mobile:hover {
+    color: var(--caramel);
+}
+
+/* ======================================
+   OFFCANVAS
+====================================== */
+
+.offcanvas-header {
+    background: var(--warm);
+}
+
+.offcanvas-title {
+    color: var(--mocha);
+}
+
+/* ======================================
+   FOOTER
+====================================== */
+
+footer {
+    background: var(--mocha);
+    color: white;
+    padding: 30px 0;
+    margin-top: 40px;
+}
+
+footer a {
+    color: var(--warm);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--gold);
+}
+
+/* ======================================
+   RESPONSIVE
+====================================== */
+
+@media (max-width: 768px) {
+
+    .banner-img {
+        height: 240px;
+    }
+
+    .titulo-seccion {
+        font-size: 32px;
+    }
+
+}
