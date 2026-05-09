@@ -7,8 +7,14 @@ if (session_status() === PHP_SESSION_NONE) {
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
-    $client = new MongoDB\Client("mongodb://localhost:27017");
+
+    $client = new MongoDB\Client(
+        "mongodb+srv://neyderpereaurrutia92_db_user:TUPASSWORD@cluster0.fuvknik.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    );
+
     $db = $client->reposteria_db;
+
 } catch (Exception $e) {
+
     die("Error de conexión: " . $e->getMessage());
-}
+}   
