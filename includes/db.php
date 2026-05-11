@@ -8,7 +8,7 @@ require __DIR__ . '/../vendor/autoload.php';
 try {
 
     $client = new MongoDB\Client(
-        "mongodb+srv://neyderpereaurrutia92_db_user:erPFIEblB7MEglyQ@cluster0.fuvknik.mongodb.net/reposteria_db?retryWrites=true&w=majority&appName=Cluster0"
+        "mongodb+srv://neyderpereaurrutia92_db_user:123456Neyder@cluster0.fuvknik.mongodb.net/reposteria_db?retryWrites=true&w=majority&appName=Cluster0"
     );
 
     $db = $client->reposteria_db;
