@@ -4,12 +4,14 @@ FROM php:8.2-cli
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    libzip-dev
+    libzip-dev \
+    libssl-dev \
+    pkg-config
 
 # Instalar extensiones PHP
 RUN docker-php-ext-install zip
 
-# Instalar extensión MongoDB
+# Instalar MongoDB extension
 RUN pecl install mongodb && docker-php-ext-enable mongodb
 
 # Instalar Composer
@@ -23,8 +25,8 @@ WORKDIR /app
 # Instalar dependencias PHP
 RUN composer install
 
-# Puerto de Render
+# Puerto Render
 EXPOSE 10000
 
-# Ejecutar proyecto
+# Ejecutar servidor
 CMD php -S 0.0.0.0:10000 -t public
