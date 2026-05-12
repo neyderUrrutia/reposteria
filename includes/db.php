@@ -1,4 +1,5 @@
 <?php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -7,13 +8,13 @@ require __DIR__ . '/../vendor/autoload.php';
 
 try {
 
-    $client = new MongoDB\Client(
-        "mongodb+srv://neyderpereaurrutia92_db_user:123456Neyder@cluster0.fuvknik.mongodb.net/reposteria_db?retryWrites=true&w=majority&appName=Cluster0"
-    );
+    $uri = "mongodb+srv://neyderpereaurrutia92_db_user:Neyder123@cluster0.fuvknik.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-    $db = $client->reposteria_db;
+    $client = new MongoDB\Client($uri);
+
+    $db = $client->selectDatabase('reposteria_db');
 
 } catch (Exception $e) {
 
-    die("Error de conexión: " . $e->getMessage());
+    die("Error de conexión MongoDB: " . $e->getMessage());
 }

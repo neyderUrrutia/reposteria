@@ -5,6 +5,11 @@ require_once __DIR__ . '/../includes/db.php';
 
 $mensaje = "";
 
+// Verificar conexión primero
+if (!isset($db)) {
+    die("Error: no se pudo conectar con MongoDB");
+}
+
 // SOLO cuando se envía el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -12,22 +17,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $correo = trim($_POST['correo'] ?? '');
     $clave  = trim($_POST['clave'] ?? '');
 
-    // Buscar administrador en Mongo
-    $admin = $db->usuarios->findOne([
-        'correo' => $correo,
-        'rol' => 'admin'
-    ]);
+    try {
 
-    if ($admin && password_verify($clave, $admin['clave'])) {
+        // Buscar administrador en MongoDB Atlas
+        $admin = $db->usuarios->findOne([
+            'correo' => $correo,
+            'rol' => 'admin'
+        ]);
 
-        $_SESSION['admin_id'] = (string)$admin['_id'];
-        $_SESSION['admin_nombre'] = $admin['nombre'];
+        if ($admin && password_verify($clave, $admin['clave'])) {
 
-        header("Location: index.php");
-        exit;
+            $_SESSION['admin_id'] = (string)$admin['_id'];
+            $_SESSION['admin_nombre'] = $admin['nombre'];
 
-    } else {
-        $mensaje = "Correo o contraseña incorrectos";
+            header("Location: index.php");
+            exit;
+
+        } else {
+
+            $mensaje = "Correo o contraseña incorrectos";
+        }
+
+    } catch (Exception $e) {
+
+        die("Error MongoDB: " . $e->getMessage());
     }
 }
 ?>
