@@ -41,7 +41,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -63,129 +62,89 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             --text:    #2c1a0e;
             --muted:   #8a6f5e;
         }
-
         * { box-sizing: border-box; }
-
         body {
             min-height: 100vh;
             background: var(--mocha);
             background-image:
                 radial-gradient(circle at 20% 50%, rgba(192,112,58,.25) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(201,168,76,.15) 0%, transparent 40%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'DM Sans', sans-serif;
-            padding: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'DM Sans', sans-serif; padding: 1rem;
         }
-
         .login-card {
-            background: #fff;
-            border-radius: 24px;
+            background: #fff; border-radius: 24px;
             box-shadow: 0 8px 40px rgba(59,35,20,.3);
-            width: 100%;
-            max-width: 400px;
-            overflow: hidden;
+            width: 100%; max-width: 400px; overflow: hidden;
         }
-
-        /* HEADER */
         .card-header-ad {
             background: var(--mocha);
             padding: 2rem 2rem 1.75rem;
-            text-align: center;
-            position: relative;
+            text-align: center; position: relative;
         }
         .card-header-ad::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 3px;
+            content: ''; position: absolute;
+            bottom: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, var(--caramel), var(--gold));
         }
+
+        /* LOGO */
         .card-logo {
-            width: 64px; height: 64px;
-            background: var(--warm);
+            width: 90px; height: 90px;
+            background: transparent;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 1rem;
-            font-size: 28px;
+            overflow: hidden;
         }
+        .card-logo img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
         .card-header-ad h4 {
             font-family: 'Cormorant Garamond', serif;
-            color: var(--gold);
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 4px;
+            color: var(--gold); font-size: 1.4rem; font-weight: 600; margin-bottom: 4px;
         }
         .card-header-ad p {
-            color: rgba(255,255,255,.5);
-            font-size: 12px;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: rgba(255,255,255,.5); font-size: 12px; margin: 0;
+            text-transform: uppercase; letter-spacing: 2px;
         }
-
-        /* BODY */
         .card-body-ad { padding: 2rem; }
-
-        /* ALERTA */
         .alerta-error {
-            background: #fdecea;
-            color: #8c1a1a;
-            border-left: 4px solid #e53935;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 13px;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: #fdecea; color: #8c1a1a;
+            border-left: 4px solid #e53935; border-radius: 10px;
+            padding: 0.75rem 1rem; font-size: 13px; margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 8px;
         }
-
-        /* INPUTS */
         .input-group-ad { margin-bottom: 1.1rem; }
-
         .form-label-ad {
-            font-size: 12px; font-weight: 500;
-            color: var(--muted); text-transform: uppercase;
-            letter-spacing: .06em; margin-bottom: 6px; display: block;
+            font-size: 12px; font-weight: 500; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; display: block;
         }
-
         .input-wrap { position: relative; }
-
         .input-icon {
             position: absolute; left: 14px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted); font-size: 15px; pointer-events: none;
+            transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none;
         }
-
         .toggle-pass {
             position: absolute; right: 14px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--muted); font-size: 15px;
-            cursor: pointer; border: none; background: none; padding: 0;
-            transition: .2s;
+            transform: translateY(-50%); color: var(--muted); font-size: 15px;
+            cursor: pointer; border: none; background: none; padding: 0; transition: .2s;
         }
         .toggle-pass:hover { color: var(--caramel); }
-
         .form-control-ad {
-            width: 100%;
-            border: 1.5px solid rgba(192,112,58,.25);
-            border-radius: 10px;
-            padding: 0.65rem 1rem 0.65rem 2.5rem;
-            font-size: 14px; color: var(--text);
-            background: var(--cream);
-            transition: border-color .2s, box-shadow .2s;
-            outline: none;
+            width: 100%; border: 1.5px solid rgba(192,112,58,.25);
+            border-radius: 10px; padding: 0.65rem 1rem 0.65rem 2.5rem;
+            font-size: 14px; color: var(--text); background: var(--cream);
+            transition: border-color .2s, box-shadow .2s; outline: none;
         }
         .form-control-ad:focus {
             border-color: var(--caramel);
-            box-shadow: 0 0 0 3px rgba(192,112,58,.12);
-            background: #fff;
+            box-shadow: 0 0 0 3px rgba(192,112,58,.12); background: #fff;
         }
         .con-toggle { padding-right: 2.5rem; }
-
-        /* BOTÓN */
         .btn-ingresar {
             width: 100%; background: var(--caramel); color: #fff;
             border: none; border-radius: 50px; padding: 0.75rem;
@@ -196,41 +155,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
         .btn-ingresar:hover  { background: var(--mocha); }
         .btn-ingresar:active { transform: scale(.98); }
-
-        /* NOTA */
         .login-note {
-            text-align: center;
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 1rem;
-            margin-bottom: 0;
+            text-align: center; font-size: 12px;
+            color: var(--muted); margin-top: 1rem; margin-bottom: 0;
         }
-
-        /* FOOTER */
         .card-footer-ad {
-            text-align: center;
-            padding: 1rem 2rem 1.5rem;
+            text-align: center; padding: 1rem 2rem 1.5rem;
             border-top: 1px solid var(--warm);
         }
-        .card-footer-ad a {
-            font-size: 13px; color: var(--caramel); text-decoration: none;
-        }
+        .card-footer-ad a { font-size: 13px; color: var(--caramel); text-decoration: none; }
         .card-footer-ad a:hover { text-decoration: underline; }
     </style>
 </head>
-
 <body>
 
 <div class="login-card">
 
-    <!-- HEADER -->
     <div class="card-header-ad">
-        <div class="card-logo">🍰</div>
+        <div class="card-logo">
+            <img src="assets/img/logo-atratodulce-transparente.png" alt="Atrato Dulce">
+        </div>
         <h4>Atrato Dulce</h4>
         <p>Inicia sesión para continuar</p>
     </div>
 
-    <!-- BODY -->
     <div class="card-body-ad">
 
         <?php if ($mensaje): ?>
@@ -242,35 +190,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <form method="POST" autocomplete="off">
 
-            <!-- CORREO -->
             <div class="input-group-ad">
                 <label class="form-label-ad">Correo electrónico</label>
                 <div class="input-wrap">
                     <i class="bi bi-envelope input-icon"></i>
-                    <input
-                        type="email"
-                        name="correo"
-                        class="form-control-ad"
+                    <input type="email" name="correo" class="form-control-ad"
                         placeholder="tucorreo@email.com"
-                        value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>"
-                        required
-                    >
+                        value="<?= htmlspecialchars($_POST['correo'] ?? '') ?>" required>
                 </div>
             </div>
 
-            <!-- CONTRASEÑA -->
             <div class="input-group-ad">
                 <label class="form-label-ad">Contraseña</label>
                 <div class="input-wrap">
                     <i class="bi bi-lock input-icon"></i>
-                    <input
-                        type="password"
-                        name="clave"
-                        id="inputClave"
-                        class="form-control-ad con-toggle"
-                        placeholder="••••••••"
-                        required
-                    >
+                    <input type="password" name="clave" id="inputClave"
+                        class="form-control-ad con-toggle" placeholder="••••••••" required>
                     <button type="button" class="toggle-pass" onclick="togglePass()">
                         <i class="bi bi-eye" id="iconOjo"></i>
                     </button>
@@ -289,7 +224,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     </div>
 
-    <!-- FOOTER -->
     <div class="card-footer-ad">
         <a href="index.php">
             <i class="bi bi-arrow-left"></i> Volver al inicio
@@ -303,14 +237,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         const input = document.getElementById('inputClave');
         const icon  = document.getElementById('iconOjo');
         if (input.type === 'password') {
-            input.type = 'text';
-            icon.className = 'bi bi-eye-slash';
+            input.type = 'text'; icon.className = 'bi bi-eye-slash';
         } else {
-            input.type = 'password';
-            icon.className = 'bi bi-eye';
+            input.type = 'password'; icon.className = 'bi bi-eye';
         }
     }
 </script>
-
 </body>
 </html>
