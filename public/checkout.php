@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ── MERCADO PAGO ──
         try {
-            $base_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+            $base_url = "https://atrato-dulce-je6g.onrender.com/public";
 
             $client     = new PreferenceClient();
             $preference = $client->create([
@@ -80,9 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'email' => $correo,
                 ],
                 'back_urls' => [
-                    'success' => $base_url . '/public/pago_success.php?pedido=' . $pedido_id,
-                    'failure' => $base_url . '/public/pago_failure.php?pedido=' . $pedido_id,
-                    'pending' => $base_url . '/public/pago_pending.php?pedido=' . $pedido_id,
+                    'success' => $base_url . '/pago_success.php?pedido=' . $pedido_id,
+                    'failure' => $base_url . '/pago_failure.php?pedido=' . $pedido_id,
+                    'pending' => $base_url . '/pago_pending.php?pedido=' . $pedido_id,
                 ],
                 'auto_return'          => 'approved',
                 'external_reference'   => $pedido_id,
