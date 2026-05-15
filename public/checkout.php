@@ -8,24 +8,22 @@ use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Exceptions\MPApiException;
 
-// Si el carrito está vacío
 if (!isset($_SESSION['carrito']) || empty($_SESSION['carrito'])) {
     header("Location: carrito.php");
     exit;
 }
 
-// Configurar Mercado Pago
 MercadoPagoConfig::setAccessToken("APP_USR-8653626796901740-051502-a38586b6b63378babebb4038cd991bf3-3404522624");
 
 $mensaje = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $nombre   = trim($_POST['nombre'] ?? '');
-    $telefono = trim($_POST['telefono'] ?? '');
-    $correo   = trim($_POST['correo'] ?? '');
+    $nombre = trim($_POST['nombre'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $metodo = $_POST['metodo_pago'] ?? 'mercadopago'; // 'mercadopago' o 'efectivo'
 
-    if (!$nombre || !$telefono || !$correo) {
+    if (!$nombre || !$correo) {
         $mensaje = "❌ Debes llenar todos los campos.";
     } else {
 
@@ -42,28 +40,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'precio'   => $item['precio']
             ];
             $items_mp[] = [
-                'id'         => $item['id'],
-                'title'      => $item['nombre'],
-                'quantity'   => (int)$item['cantidad'],
-                'unit_price' => (float)$item['precio'],
-                'currency_id'=> 'COP'
+                'id'          => $item['id'],
+                'title'       => $item['nombre'],
+                'quantity'    => (int)$item['cantidad'],
+                'unit_price'  => (float)$item['precio'],
+                'currency_id' => 'COP'
             ];
         }
 
         // Guardar pedido en MongoDB
         $resultado = $db->pedidos->insertOne([
             'nombre_cliente' => $nombre,
-            'telefono'       => $telefono,
             'correo'         => $correo,
             'fecha'          => new UTCDateTime(),
             'total'          => $total,
             'productos'      => $productos,
+            'metodo_pago'    => $metodo,
             'estado'         => 'Pendiente'
         ]);
 
         $pedido_id = (string)$resultado->getInsertedId();
 
-        // Crear preferencia Mercado Pago
+        // ── EFECTIVO ──
+        if ($metodo === 'efectivo') {
+            $_SESSION['carrito'] = [];
+            header("Location: pago_pending.php?pedido=" . $pedido_id . "&tipo=efectivo");
+            exit;
+        }
+
+        // ── MERCADO PAGO ──
         try {
             $base_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 
@@ -73,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'payer' => [
                     'name'  => $nombre,
                     'email' => $correo,
-                    'phone' => ['number' => $telefono]
                 ],
                 'back_urls' => [
                     'success' => $base_url . '/public/pago_success.php?pedido=' . $pedido_id,
@@ -90,7 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
 
         } catch (MPApiException $e) {
-            $mensaje = "❌ Error al conectar con Mercado Pago. Intenta de nuevo.";
+            $api_content = $e->getApiResponse() ? json_encode($e->getApiResponse()->getContent()) : 'sin respuesta';
+            $mensaje = "❌ Error al conectar con Mercado Pago: " . $e->getMessage() . " | " . $api_content;
+        } catch (\Exception $e) {
+            $mensaje = "❌ Error general: " . $e->getMessage();
         }
     }
 }
@@ -219,6 +226,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         margin: 1.25rem 0 !important;
     }
 
+    /* ── MÉTODOS DE PAGO ── */
+    .metodos-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 500;
+        color: var(--mocha);
+        margin-bottom: 10px;
+    }
+    .metodo-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1.5px solid #e8d5c4;
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all .2s;
+        background: #fffaf6;
+    }
+    .metodo-option:has(input:checked) {
+        border-color: var(--caramel);
+        background: #fff7f0;
+        box-shadow: 0 0 0 3px rgba(192,112,58,0.12);
+    }
+    .metodo-option input[type="radio"] { accent-color: var(--caramel); width: 16px; height: 16px; }
+    .metodo-icon { font-size: 1.4rem; }
+    .metodo-info { flex: 1; }
+    .metodo-info strong { font-size: 13.5px; color: var(--mocha); display: block; }
+    .metodo-info small { font-size: 11.5px; color: #9a7b6a; }
+
     .btn-pagar {
         background: var(--caramel) !important;
         color: white !important;
@@ -265,7 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         margin-bottom: 1.25rem;
     }
 
-    .mp-badge {
+    .seguro-note {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -289,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="checkout-card">
 
         <?php if ($mensaje): ?>
-        <div class="alert-error"><?= $mensaje ?></div>
+        <div class="alert-error"><?= htmlspecialchars($mensaje) ?></div>
         <?php endif; ?>
 
         <!-- Resumen del carrito -->
@@ -325,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 <label class="form-label">Correo electrónico</label>
                 <div class="input-wrap">
                     <i class="bi bi-envelope input-icon"></i>
@@ -336,28 +375,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label">Número de WhatsApp</label>
-                <div class="input-wrap">
-                    <i class="bi bi-whatsapp input-icon"></i>
-                    <input type="text" name="telefono" class="form-control"
-                        placeholder="Ej: 3008144054"
-                        value="<?= htmlspecialchars($_POST['telefono'] ?? '') ?>"
-                        required>
+            <hr class="checkout-divider">
+
+            <!-- MÉTODO DE PAGO -->
+            <div class="metodos-title">Método de pago</div>
+
+            <label class="metodo-option">
+                <input type="radio" name="metodo_pago" value="mercadopago"
+                    <?= ($_POST['metodo_pago'] ?? 'mercadopago') === 'mercadopago' ? 'checked' : '' ?>>
+                <span class="metodo-icon">💳</span>
+                <div class="metodo-info">
+                    <strong>Mercado Pago</strong>
+                    <small>Tarjeta, PSE, Nequi, Daviplata y más</small>
                 </div>
-            </div>
+            </label>
+
+            <label class="metodo-option">
+                <input type="radio" name="metodo_pago" value="efectivo"
+                    <?= ($_POST['metodo_pago'] ?? '') === 'efectivo' ? 'checked' : '' ?>>
+                <span class="metodo-icon">💵</span>
+                <div class="metodo-info">
+                    <strong>Efectivo</strong>
+                    <small>Paga al recibir tu pedido</small>
+                </div>
+            </label>
 
             <hr class="checkout-divider">
 
             <button type="submit" class="btn-pagar">
-                <i class="bi bi-credit-card"></i> Pagar con Mercado Pago
+                <i class="bi bi-bag-check"></i> Confirmar pedido
             </button>
 
         </form>
 
-        <div class="mp-badge">
+        <div class="seguro-note">
             <i class="bi bi-shield-check"></i>
-            Pago seguro procesado por Mercado Pago
+            Tus datos están seguros con nosotros
         </div>
 
     </div>

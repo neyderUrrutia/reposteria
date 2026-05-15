@@ -14,14 +14,12 @@ if ($pedido_id) {
     try {
         $pedido = $db->pedidos->findOne(['_id' => new ObjectId($pedido_id)]);
 
-        // Actualizar estado a Pagado
         if ($pedido) {
             $db->pedidos->updateOne(
                 ['_id' => new ObjectId($pedido_id)],
                 ['$set' => ['estado' => 'Pagado']]
             );
 
-            // ── ENVIAR CORREO AL CLIENTE ──
             $correo_cliente = $pedido['correo'] ?? null;
 
             if ($correo_cliente) {
@@ -31,7 +29,7 @@ if ($pedido_id) {
                     $mail->Host       = 'smtp.gmail.com';
                     $mail->SMTPAuth   = true;
                     $mail->Username   = 'urrutianeyder002@gmail.com';
-                    $mail->Password   = 'cezfumycecxwuqez'; // contraseña de app sin espacios
+                    $mail->Password   = 'cezfumycecxwuqez';
                     $mail->SMTPSecure = 'tls';
                     $mail->Port       = 587;
                     $mail->CharSet    = 'UTF-8';
@@ -41,7 +39,6 @@ if ($pedido_id) {
                     $mail->isHTML(true);
                     $mail->Subject = '🧁 Recibo de tu pedido - Atrato Dulce';
 
-                    // Armar tabla de productos
                     $tabla_productos = '';
                     foreach ($pedido['productos'] as $item) {
                         $sub = ($item['precio'] ?? 0) * ($item['cantidad'] ?? 1);
@@ -53,22 +50,20 @@ if ($pedido_id) {
                         </tr>";
                     }
 
-                    $total_fmt = '$' . number_format($pedido['total'] ?? 0, 0, ',', '.');
+                    $total_fmt   = '$' . number_format($pedido['total'] ?? 0, 0, ',', '.');
+                    $metodo_pago = ($pedido['metodo_pago'] ?? 'mercadopago') === 'efectivo' ? 'Efectivo' : 'Mercado Pago';
 
                     $mail->Body = "
                     <div style='font-family:DM Sans,sans-serif; background:#fdf6ee; padding:30px;'>
                       <div style='max-width:560px; margin:0 auto; background:white; border-radius:20px; overflow:hidden; box-shadow:0 4px 20px rgba(59,35,20,0.1);'>
 
-                        <!-- HEADER -->
                         <div style='background:#3b2314; padding:30px; text-align:center;'>
                           <h1 style='font-family:Georgia,serif; color:#c9a84c; font-size:1.6rem; margin:0;'>Atrato Dulce</h1>
                           <p style='color:rgba(255,255,255,0.6); font-size:12px; margin:6px 0 0; letter-spacing:2px; text-transform:uppercase;'>Recibo de compra</p>
                         </div>
 
-                        <!-- FRANJA COLORES -->
                         <div style='height:4px; background:linear-gradient(90deg,#3b2314,#c0703a);'></div>
 
-                        <!-- BODY -->
                         <div style='padding:30px;'>
 
                           <p style='color:#3b2314; font-size:15px; margin-bottom:6px;'>
@@ -78,19 +73,17 @@ if ($pedido_id) {
                             Tu pago fue procesado exitosamente. Aquí está el resumen de tu pedido:
                           </p>
 
-                          <!-- INFO PEDIDO -->
                           <div style='background:#f5e6d0; border-radius:12px; padding:14px 18px; margin-bottom:20px; font-size:13px; color:#3b2314;'>
                             <div style='display:flex; justify-content:space-between; margin-bottom:6px;'>
                               <span style='color:#8a6f5e;'>ID del pedido</span>
                               <span style='font-weight:600;'>#{$pedido_id}</span>
                             </div>
                             <div style='display:flex; justify-content:space-between;'>
-                              <span style='color:#8a6f5e;'>Teléfono</span>
-                              <span>{$pedido['telefono']}</span>
+                              <span style='color:#8a6f5e;'>Método de pago</span>
+                              <span>{$metodo_pago}</span>
                             </div>
                           </div>
 
-                          <!-- TABLA PRODUCTOS -->
                           <table style='width:100%; border-collapse:collapse; font-size:13px;'>
                             <thead>
                               <tr style='background:#f5e6d0;'>
@@ -104,7 +97,6 @@ if ($pedido_id) {
                             </tbody>
                           </table>
 
-                          <!-- TOTAL -->
                           <div style='display:flex; justify-content:space-between; align-items:center;
                                       margin-top:16px; padding-top:14px; border-top:2px solid #f1e4d8;'>
                             <span style='font-size:14px; color:#8a6f5e;'>Total pagado</span>
@@ -117,7 +109,6 @@ if ($pedido_id) {
 
                         </div>
 
-                        <!-- FOOTER -->
                         <div style='background:#3b2314; padding:18px; text-align:center;'>
                           <p style='color:rgba(255,255,255,0.4); font-size:11px; margin:0;'>
                             © Atrato Dulce · Quibdó, Chocó, Colombia
@@ -131,12 +122,12 @@ if ($pedido_id) {
                     $mail->send();
 
                 } catch (Exception $e) {
-                    // Silencioso — el pago ya se procesó, el correo es secundario
+                    // Silencioso — el pago ya se procesó
                 }
             }
         }
 
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         // ID inválido
     }
 }

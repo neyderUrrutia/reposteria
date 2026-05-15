@@ -49,7 +49,6 @@ $categorias = [
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
   <style>
-    /* ── VARIABLES (igual que index) ── */
     :root {
       --cream:   #fdf6ee;
       --warm:    #f5e6d0;
@@ -69,13 +68,11 @@ $categorias = [
       font-family: 'DM Sans', sans-serif;
     }
 
-    /* ── STRIPE (igual que index) ── */
     .stripe {
       height: 4px;
       background: linear-gradient(90deg, var(--caramel), var(--rose), var(--gold));
     }
 
-    /* ── PROMO BAND (igual que index) ── */
     .promo-band {
       background: var(--mocha);
       color: #fff;
@@ -84,7 +81,6 @@ $categorias = [
       font-size: 14px;
     }
 
-    /* ── HERO DEL CATÁLOGO ── */
     .catalogo-hero {
       background: var(--warm);
       padding: 3.5rem 0 2.5rem;
@@ -113,7 +109,6 @@ $categorias = [
       margin: 0.75rem auto 0;
     }
 
-    /* ── BUSCADOR ── */
     .search-wrap {
       max-width: 520px;
       margin: 2rem auto 0;
@@ -141,12 +136,10 @@ $categorias = [
     }
     .search-wrap .btn-buscar:hover { background: var(--mocha); }
 
-    /* ── LAYOUT PRINCIPAL ── */
     .catalogo-body {
       padding: 3rem 0 5rem;
     }
 
-    /* ── SIDEBAR CATEGORÍAS ── */
     .sidebar {
       background: #fff;
       border-radius: var(--radius);
@@ -184,7 +177,6 @@ $categorias = [
     }
     .cat-link.activa i { color: var(--gold); }
 
-    /* ── TARJETAS PRODUCTO (igual que index) ── */
     .product-card {
       background: #fff;
       border-radius: var(--radius);
@@ -234,26 +226,46 @@ $categorias = [
       font-weight: 500;
       margin-bottom: 10px;
     }
+
+    /* Botones de acción */
     .btn-add {
       background: var(--caramel);
       color: #fff;
       border-radius: 50px;
-      font-size: 13px;
+      font-size: 12px;
       border: none;
       transition: background .2s;
+      padding: 6px 12px;
     }
     .btn-add:hover { background: var(--mocha); color: #fff; }
+
+    .btn-comprar-ahora {
+      background: var(--mocha);
+      color: #fff;
+      border-radius: 50px;
+      font-size: 12px;
+      border: none;
+      transition: background .2s;
+      padding: 6px 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .btn-comprar-ahora:hover { background: #5a3520; color: #fff; }
+
     .btn-outline-mocha {
       border: 1.5px solid var(--mocha);
       color: var(--mocha);
       border-radius: 50px;
-      font-size: 13px;
+      font-size: 12px;
       background: transparent;
       transition: all .2s;
+      padding: 6px 12px;
     }
     .btn-outline-mocha:hover { background: var(--mocha); color: #fff; }
 
-    /* ── BADGE CATEGORÍA ── */
     .cat-badge {
       display: inline-block;
       font-size: 10px;
@@ -267,7 +279,6 @@ $categorias = [
       letter-spacing: .05em;
     }
 
-    /* ── VACÍO ── */
     .empty-state {
       text-align: center;
       padding: 4rem 1rem;
@@ -275,7 +286,6 @@ $categorias = [
     }
     .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: var(--warm); }
 
-    /* ── CONTEO ── */
     .result-count {
       font-size: 13px;
       color: var(--muted);
@@ -297,19 +307,15 @@ $categorias = [
 
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
-<!-- PROMO -->
- <div class="promo-band">
-🚚 Envío gratis en pedidos mayores a <span>$20.000</span> · Pago seguro · Hecho con amor en quibdo chocò
+<div class="promo-band">
+🚚 Envío gratis en pedidos mayores a <span>$20.000</span> · Pago seguro · Hecho con amor en Quibdó, Chocó
 </div>
 
-
-<!-- HERO -->
 <div class="catalogo-hero">
   <span class="label">Encuentra lo que buscas</span>
   <h1>Nuestro Catálogo</h1>
   <div class="rule"></div>
 
-  <!-- BUSCADOR -->
   <form class="search-wrap d-flex" method="GET">
     <?php if ($categoria !== 'Todas'): ?>
       <input type="hidden" name="cat" value="<?= h($categoria) ?>">
@@ -327,12 +333,10 @@ $categorias = [
   </form>
 </div>
 
-<!-- CUERPO -->
 <section class="catalogo-body">
   <div class="container">
     <div class="row g-4">
 
-      <!-- SIDEBAR -->
       <aside class="col-md-3" data-aos="fade-right">
         <div class="sidebar">
           <div class="sidebar-title">Categorías</div>
@@ -348,7 +352,6 @@ $categorias = [
         </div>
       </aside>
 
-      <!-- PRODUCTOS -->
       <div class="col-md-9">
 
         <?php
@@ -393,15 +396,33 @@ $categorias = [
 
                 <div class="price">$<?= number_format($p['precio'] ?? 0, 0, ',', '.') ?></div>
 
-                <div class="d-flex gap-2">
-                  <a href="producto.php?id=<?= $id ?>" class="btn btn-outline-mocha flex-fill btn-sm">
-                    Ver más
-                  </a>
+                <!-- Botones: Añadir al carrito + Comprar ahora -->
+                <div class="d-flex gap-2 flex-wrap">
+
+                  <!-- Añadir al carrito -->
                   <form action="carrito.php" method="GET" class="flex-fill">
                     <input type="hidden" name="add" value="<?= $id ?>">
-                    <button type="submit" class="btn btn-add w-100 btn-sm">Añadir</button>
+                    <button type="submit" class="btn btn-add w-100 btn-sm">
+                      <i class="bi bi-cart-plus"></i> Añadir
+                    </button>
                   </form>
+
+                  <!-- Comprar ahora: añade al carrito y va directo al checkout -->
+                  <form action="carrito.php" method="GET" class="flex-fill">
+                    <input type="hidden" name="add" value="<?= $id ?>">
+                    <input type="hidden" name="comprar_ahora" value="1">
+                    <button type="submit" class="btn btn-comprar-ahora w-100 btn-sm">
+                      <i class="bi bi-lightning-fill"></i> Comprar
+                    </button>
+                  </form>
+
                 </div>
+
+                <!-- Ver más -->
+                <a href="producto.php?id=<?= $id ?>" class="btn btn-outline-mocha w-100 btn-sm mt-2">
+                  Ver más
+                </a>
+
               </div>
 
             </div>

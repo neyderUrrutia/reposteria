@@ -25,6 +25,10 @@ if (isset($_GET['add'])) {
             ];
         }
     }
+    // Si viene de "Comprar ahora", va directo al checkout
+    if (isset($_GET['comprar_ahora'])) {
+        header("Location: checkout.php"); exit;
+    }
     header("Location: carrito.php"); exit;
 }
 
