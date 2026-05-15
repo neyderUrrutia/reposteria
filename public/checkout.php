@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../includes/enviar_factura.php';
 
 use MongoDB\BSON\UTCDateTime;
 use MercadoPago\MercadoPagoConfig;
@@ -62,11 +63,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pedido_id = (string)$resultado->getInsertedId();
 
         // ── EFECTIVO ──
-        if ($metodo === 'efectivo') {
-            $_SESSION['carrito'] = [];
-            header("Location: pago_pending.php?pedido=" . $pedido_id . "&tipo=efectivo");
-            exit;
-        }
+if ($metodo === 'efectivo') {
+
+    // ENVIAR FACTURA AL CORREO
+    enviarFactura(
+        $correo,
+        $nombre,
+        $pedido_id,
+        $total
+    );
+
+    // LIMPIAR CARRITO
+    $_SESSION['carrito'] = [];
+
+    // REDIRECCIÓN
+    header("Location: pago_pending.php?pedido=" . $pedido_id . "&tipo=efectivo");
+
+    exit;
+}
 
         // ── MERCADO PAGO ──
         try {
