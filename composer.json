@@ -1,5 +1,7 @@
 {
     "require": {
-        "mongodb/mongodb": "^2.2"
+        "mongodb/mongodb": "^2.2",
+        "mercadopago/dx-php": "^3.9",
+        "phpmailer/phpmailer": "^7.0"
     }
 }
