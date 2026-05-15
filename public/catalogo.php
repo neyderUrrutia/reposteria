@@ -307,9 +307,7 @@ $categorias = [
 
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
-<div class="promo-band">
-🚚 Envío gratis en pedidos mayores a <span>$20.000</span> · Pago seguro · Hecho con amor en Quibdó, Chocó
-</div>
+
 
 <div class="catalogo-hero">
   <span class="label">Encuentra lo que buscas</span>

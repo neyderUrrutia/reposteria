@@ -146,7 +146,7 @@ $categorias_db = $collection->distinct('categoria', []);
 
 <nav class="navbar-ad">
   <a href="index.php" class="navbar-brand-ad">
-    <div class="navbar-logo">🍰</div>
+    <div class="navbar-logo"></div>
     <span class="navbar-title">Atrato Dulce</span>
   </a>
   <div class="navbar-links">
