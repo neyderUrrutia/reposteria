@@ -2,56 +2,55 @@
 session_start();
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../vendor/autoload.php';
- 
+
 use MongoDB\BSON\UTCDateTime;
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Exceptions\MPApiException;
- 
+
 // Si el carrito está vacío
 if (!isset($_SESSION['carrito']) || empty($_SESSION['carrito'])) {
     header("Location: carrito.php");
     exit;
 }
- 
+
 // Configurar Mercado Pago
 MercadoPagoConfig::setAccessToken("APP_USR-8653626796901740-051502-a38586b6b63378babebb4038cd991bf3-3404522624");
- 
+
 $mensaje = "";
- 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
- 
+
     $nombre   = trim($_POST['nombre'] ?? '');
     $telefono = trim($_POST['telefono'] ?? '');
     $correo   = trim($_POST['correo'] ?? '');
- 
+
     if (!$nombre || !$telefono || !$correo) {
         $mensaje = "❌ Debes llenar todos los campos.";
     } else {
- 
-        // Calcular total y armar productos
-        $total    = 0;
+
+        $total     = 0;
         $productos = [];
         $items_mp  = [];
- 
+
         foreach ($_SESSION['carrito'] as $item) {
-            $subtotal  = $item['precio'] * $item['cantidad'];
-            $total    += $subtotal;
+            $subtotal   = $item['precio'] * $item['cantidad'];
+            $total     += $subtotal;
             $productos[] = [
                 'nombre'   => $item['nombre'],
                 'cantidad' => $item['cantidad'],
                 'precio'   => $item['precio']
             ];
             $items_mp[] = [
-                'id'          => $item['id'],
-                'title'       => $item['nombre'],
-                'quantity'    => (int)$item['cantidad'],
-                'unit_price'  => (float)$item['precio'],
-                'currency_id' => 'COP'
+                'id'         => $item['id'],
+                'title'      => $item['nombre'],
+                'quantity'   => (int)$item['cantidad'],
+                'unit_price' => (float)$item['precio'],
+                'currency_id'=> 'COP'
             ];
         }
- 
-        // Guardar pedido en MongoDB con estado "pendiente_pago"
+
+        // Guardar pedido en MongoDB
         $resultado = $db->pedidos->insertOne([
             'nombre_cliente' => $nombre,
             'telefono'       => $telefono,
@@ -61,15 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'productos'      => $productos,
             'estado'         => 'Pendiente'
         ]);
- 
+
         $pedido_id = (string)$resultado->getInsertedId();
- 
-        // Crear preferencia de Mercado Pago
+
+        // Crear preferencia Mercado Pago
         try {
             $base_url = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
- 
-            $client = new PreferenceClient();
- 
+
+            $client     = new PreferenceClient();
             $preference = $client->create([
                 'items' => $items_mp,
                 'payer' => [
@@ -82,16 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'failure' => $base_url . '/public/pago_failure.php?pedido=' . $pedido_id,
                     'pending' => $base_url . '/public/pago_pending.php?pedido=' . $pedido_id,
                 ],
-                'auto_return'       => 'approved',
-                'external_reference'=> $pedido_id,
+                'auto_return'          => 'approved',
+                'external_reference'   => $pedido_id,
                 'statement_descriptor' => 'Atrato Dulce'
             ]);
- 
-            // Vaciar carrito y redirigir a MP
+
             $_SESSION['carrito'] = [];
             header("Location: " . $preference->init_point);
             exit;
- 
+
         } catch (MPApiException $e) {
             $mensaje = "❌ Error al conectar con Mercado Pago. Intenta de nuevo.";
         }
@@ -125,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         padding: 2rem 1rem;
     }
     .checkout-wrap { width: 100%; max-width: 480px; }
- 
+
     .checkout-title {
         font-family: 'Cormorant Garamond', serif;
         color: var(--mocha);
@@ -134,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         text-align: center;
         margin-bottom: 1.5rem;
     }
- 
+
     .checkout-card {
         background: white;
         border: 1px solid rgba(192,112,58,0.2);
@@ -151,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         height: 4px;
         background: linear-gradient(90deg, var(--mocha), var(--caramel));
     }
- 
+
     .form-label {
         color: var(--mocha) !important;
         font-weight: 500 !important;
@@ -160,14 +157,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         letter-spacing: .05em;
         margin-bottom: 6px !important;
     }
- 
+
     .input-wrap { position: relative; }
     .input-icon {
         position: absolute; left: 13px; top: 50%;
         transform: translateY(-50%);
         color: #b0907a; font-size: 14px; pointer-events: none;
     }
- 
+
     .form-control {
         border: 1.5px solid #e8d5c4 !important;
         border-radius: 10px !important;
@@ -184,14 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         background-color: white !important;
     }
     .form-control::placeholder { color: #c4a98a !important; opacity: 1 !important; }
- 
-    .checkout-divider {
-        border: none !important;
-        border-top: 1px solid #f1e4d8 !important;
-        margin: 1.25rem 0 !important;
-    }
- 
-    /* Resumen del pedido */
+
     .resumen {
         background: var(--warm);
         border-radius: 12px;
@@ -205,7 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         font-size: 1rem;
         font-weight: 600;
         margin-bottom: .5rem;
-        color: var(--mocha);
     }
     .resumen-item {
         display: flex;
@@ -223,7 +212,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         color: var(--caramel);
         font-family: 'Cormorant Garamond', serif;
     }
- 
+
+    .checkout-divider {
+        border: none !important;
+        border-top: 1px solid #f1e4d8 !important;
+        margin: 1.25rem 0 !important;
+    }
+
     .btn-pagar {
         background: var(--caramel) !important;
         color: white !important;
@@ -245,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         transform: translateY(-1px);
         box-shadow: 0 6px 18px rgba(59,35,20,0.2) !important;
     }
- 
+
     .btn-volver {
         display: flex;
         align-items: center;
@@ -258,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         transition: .2s;
     }
     .btn-volver:hover { color: var(--caramel); }
- 
+
     .alert-error {
         background: #fdeeed !important;
         border: 1px solid #f0c4c4 !important;
@@ -269,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         text-align: center;
         margin-bottom: 1.25rem;
     }
- 
+
     .mp-badge {
         display: flex;
         align-items: center;
@@ -282,21 +277,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </style>
 </head>
 <body>
- 
+
 <div class="checkout-wrap">
- 
+
     <a href="carrito.php" class="btn-volver">
         <i class="bi bi-arrow-left"></i> Volver al carrito
     </a>
- 
+
     <h2 class="checkout-title">Finalizar Pedido 🧁</h2>
- 
+
     <div class="checkout-card">
- 
+
         <?php if ($mensaje): ?>
         <div class="alert-error"><?= $mensaje ?></div>
         <?php endif; ?>
- 
+
         <!-- Resumen del carrito -->
         <div class="resumen">
             <div class="resumen-title">Resumen de tu pedido</div>
@@ -316,9 +311,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span>$<?= number_format($total_resumen, 0, ',', '.') ?></span>
             </div>
         </div>
- 
+
         <form method="post">
- 
+
             <div class="mb-3">
                 <label class="form-label">Tu nombre</label>
                 <div class="input-wrap">
@@ -329,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         required>
                 </div>
             </div>
- 
+
             <div class="mb-3">
                 <label class="form-label">Correo electrónico</label>
                 <div class="input-wrap">
@@ -340,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         required>
                 </div>
             </div>
- 
+
             <div class="mb-4">
                 <label class="form-label">Número de WhatsApp</label>
                 <div class="input-wrap">
@@ -351,23 +346,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         required>
                 </div>
             </div>
- 
+
             <hr class="checkout-divider">
- 
+
             <button type="submit" class="btn-pagar">
                 <i class="bi bi-credit-card"></i> Pagar con Mercado Pago
             </button>
- 
+
         </form>
- 
+
         <div class="mp-badge">
             <i class="bi bi-shield-check"></i>
             Pago seguro procesado por Mercado Pago
         </div>
- 
+
     </div>
- 
+
 </div>
- 
+
 </body>
 </html>
